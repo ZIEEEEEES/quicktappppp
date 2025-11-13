@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Shop Management System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="page active">
+        <div class="login-wrapper">
+            <div class="login-container">
+                <h1>LOG IN</h1>
+                <form id="loginForm">
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                    <button type="submit">Login</button>
+                </form>
+                <p class="form-footer">No account? <a href="#" onclick="goToSignup(event)">Sign Up Here</a></p>
+                <div id="loginError" class="error-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIGNUP PAGE -->
+    <div id="signupPage" class="page">
+        <div class="login-wrapper">
+            <div class="login-container">
+                <h1>SIGN UP</h1>
+                <form id="signupForm">
+                    <input type="email" id="signupEmail" placeholder="Email" required>
+                    <input type="text" id="signupUsername" placeholder="Username" required>
+                    <input type="password" id="signupPassword" placeholder="Password" required>
+                    <select id="signupRole" required>
+                        <option value="">Select Role</option>
+                        <option value="admin">Admin</option>
+                        <option value="customer">Customer</option>
+                        <option value="cashier">Cashier</option>
+                    </select>
+                    <button type="submit">Done</button>
+                </form>
+                <p class="form-footer">Already have account? <a href="#" onclick="goToLogin(event)">Log In</a></p>
+                <div id="signupError" class="error-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CASHIER DASHBOARD -->
+    <div id="cashierDashboard" class="page">
+        <header class="dashboard-header">
+            <h1>CASHIER DASHBOARD</h1>
+            <button class="menu-toggle" onclick="toggleMenu('cashierMenu')">☰</button>
+        </header>
+        
+        <nav id="cashierMenu" class="cashier-menu">
+            <div class="category-filters">
+                <button class="category-btn active" onclick="filterCashierMenu('all')">ALL</button>
+                <button class="category-btn" onclick="filterCashierMenu('coffee')">COFFEE</button>
+                <button class="category-btn" onclick="filterCashierMenu('pastry')">PASTRY</button>
+            </div>
+            <input type="text" id="customerIdInput" placeholder="CUSTOMER ID:" class="customer-id-input">
+        </nav>
+
+        <div class="cashier-container">
+            <!-- LEFT: Product Menu -->
+            <div class="cashier-left">
+                <h2>ENTER CUSTOMER ORDER</h2>
+                <div id="cashierMenuGrid" class="menu-grid">
+                    <!-- Items loaded dynamically -->
+                </div>
+            </div>
+
+            <!-- RIGHT: Order Summary -->
+            <div class="cashier-right">
+                <div class="order-summary">
+                    <h3>ORDER SUMMARY</h3>
+                    <table class="order-table">
+                        <thead>
+                            <tr>
+                                <th>ITEM QTY.</th>
+                                <th>ITEM CODE</th>
+                                <th>AMOUNT</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderTableBody">
+                            <!-- Order items here -->
+                        </tbody>
+                    </table>
+
+                    <div class="order-totals">
+                        <div class="total-row">
+                            <span>TOTAL:</span>
+                            <span id="orderTotal">₱0.00</span>
+                        </div>
+                        <div class="total-row">
+                            <span>CASH:</span>
+                            <input type="number" id="cashAmount" placeholder="₱0.00" class="cash-input">
+                        </div>
+                        <div class="total-row">
+                            <span>CHANGE:</span>
+                            <span id="orderChange">₱0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn-primary" onclick="printOrder()">PRINT</button>
+                        <button class="btn-primary" onclick="editOrder()">EDIT ORDER</button>
+                    </div>
+
+                    <div class="cashier-actions">
+                        <button class="btn-secondary" onclick="logout()">LOG OUT</button>
+                        <button class="btn-secondary" onclick="changeAccount()">CHANGE ACCOUNT</button>
+                        <button class="btn-secondary" onclick="checkBookings()">CHECK BOOKINGS</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div id="adminDashboard" class="page">
+        <header class="dashboard-header">
+            <h1>ADMIN DASHBOARD</h1>
+            <button class="menu-toggle" onclick="toggleMenu('adminMenu')">☰</button>
+        </header>
+
+        <nav id="adminMenu" class="admin-menu">
+            <button class="menu-btn" onclick="showAdminSection('menu')">EDIT MENU</button>
+            <button class="menu-btn" onclick="showAdminSection('drinkwheel')">EDIT DRINK WHEEL</button>
+            <button class="menu-btn" onclick="showAdminSection('trend')">CHECK DRINK TREND</button>
+            <button class="menu-btn" onclick="showAdminSection('bookings')">CUSTOMER BOOKINGS</button>
+            <button class="menu-btn" onclick="showAdminSection('trending')">TRENDING PRODUCTS</button>
+            <button class="menu-btn logout-btn" onclick="logout()">LOGOUT</button>
+        </nav>
+
+        <main class="admin-content">
+            <!-- EDIT MENU SECTION -->
+            <div id="adminMenu-section" class="admin-section active">
+                <div class="section-header">
+                    <h2>EDIT MENU</h2>
+                    <div class="category-filters">
+                        <button class="category-btn active" onclick="filterAdminMenu('all')">ALL</button>
+                        <button class="category-btn" onclick="filterAdminMenu('coffee')">COFFEE</button>
+                        <button class="category-btn" onclick="filterAdminMenu('pastry')">PASTRY</button>
+                    </div>
+                </div>
+                <div id="adminMenuGrid" class="menu-grid">
+                    <!-- Items with EDIT/DELETE -->
+                </div>
+            </div>
+
+            <!-- DRINK WHEEL SECTION -->
+            <div id="adminDrinkwheel-section" class="admin-section">
+                <h2>EDIT DRINK WHEEL</h2>
+                <div class="drink-wheel-container">
+                    <div class="drink-list-box">
+                        <label>DRINKS:</label>
+                        <div id="drinksList" class="drinks-list">
+                            <!-- Drinks loaded dynamically -->
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="saveDrinkWheel()">DONE</button>
+                </div>
+            </div>
+
+            <!-- DRINK TREND SECTION -->
+            <div id="adminTrend-section" class="admin-section">
+                <h2>DRINK TREND THIS WEEK</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>TIMES ORDERED</th>
+                            <th>ITEM CODE</th>
+                            <th>TOTAL AMOUNT</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trendTableBody">
+                        <tr>
+                            <td>10</td>
+                            <td>BIS.FRAP</td>
+                            <td>₱1590.00</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>CAPPUCINO</td>
+                            <td>₱712.00</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>MACCHIATO</td>
+                            <td>₱693.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="btn-primary" onclick="closeTrendSection()">OKAY</button>
+            </div>
+
+            <!-- BOOKINGS SECTION -->
+            <div id="adminBookings-section" class="admin-section">
+                <h2>CUSTOMER BOOKINGS:</h2>
+                <div id="adminBookingsList" class="bookings-list">
+                    <!-- Bookings loaded dynamically -->
+                </div>
+            </div>
+
+            <!-- TRENDING PRODUCTS SECTION -->
+            <div id="adminTrending-section" class="admin-section">
+                <h2>TOP 5 DRINK THIS WEEK:</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ITEM:</th>
+                            <th>UNIT SALES:</th>
+                            <th>TOTAL:</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trendingTableBody">
+                        <tr>
+                            <td>CAPPUCNO</td>
+                            <td>5</td>
+                            <td>₱350.00</td>
+                        </tr>
+                        <tr>
+                            <td>LYCH.SODA</td>
+                            <td>4</td>
+                            <td>₱117.00</td>
+                        </tr>
+                        <tr>
+                            <td>BISCF.FRAP</td>
+                            <td>3</td>
+                            <td>₱477.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- CUSTOMER DASHBOARD -->
+    <div id="customerDashboard" class="page">
+        <header class="dashboard-header">
+            <h1>MENU</h1>
+            <button class="menu-toggle" onclick="toggleMenu('customerNav')">☰</button>
+        </header>
+
+        <nav id="customerNav" class="customer-nav">
+            <div class="nav-section">
+                <button class="category-btn active" onclick="filterCustomerMenu('all')">ALL</button>
+                <button class="category-btn" onclick="filterCustomerMenu('coffee')">COFFEE</button>
+                <button class="category-btn" onclick="filterCustomerMenu('pastry')">PASTRY</button>
+            </div>
+            <div class="nav-links">
+                <button class="nav-link" onclick="goToCustomerPage('loyalty')">LOYALTY CARD</button>
+                <button class="nav-link" onclick="goToCustomerPage('bookings')">MY BOOKINGS</button>
+                <button class="nav-link" onclick="goToCustomerPage('preorder')">PREORDER</button>
+                <button class="logout-btn" onclick="logout()">LOGOUT</button>
+            </div>
+        </nav>
+
+        <main class="customer-content">
+            <div id="customerMenuGrid" class="menu-grid">
+                <!-- Menu items loaded dynamically -->
+            </div>
+        </main>
+
+        <footer class="customer-footer">
+            <button class="footer-btn" onclick="goToCustomerPage('menu')">☕</button>
+            <button class="footer-btn" onclick="goToCustomerPage('booking')">🏠</button>
+            <button class="footer-btn" onclick="goToCustomerPage('menu')">☰</button>
+        </footer>
+    </div>
+
+    <!-- CUSTOMER LOYALTY CARD PAGE -->
+    <div id="customerLoyalty" class="page">
+        <header class="dashboard-header">
+            <h1>LOYALTY CARD</h1>
+            <button class="back-btn" onclick="goToCustomerPage('menu')">←</button>
+        </header>
+        <main class="customer-content loyalty-content">
+            <div class="loyalty-card">
+                <h2>LOYALTY CARD</h2>
+                <div id="loyaltyPoints" class="points-display">0</div>
+                <canvas id="loyaltyWheel" width="280" height="280"></canvas>
+                <button class="btn-primary" onclick="spinLoyaltyWheel()">SPIN</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- CUSTOMER BOOKINGS PAGE -->
+    <div id="customerBookings" class="page">
+        <header class="dashboard-header">
+            <h1>MY BOOKINGS</h1>
+            <button class="back-btn" onclick="goToCustomerPage('menu')">←</button>
+        </header>
+        <main class="customer-content">
+            <div id="myBookingsList" class="bookings-list">
+                <!-- Bookings loaded dynamically -->
+            </div>
+        </main>
+    </div>
+
+    <!-- CUSTOMER BOOKING PAGE -->
+    <div id="customerBooking" class="page">
+        <header class="dashboard-header">
+            <h1>BOOKING</h1>
+            <button class="back-btn" onclick="goToCustomerPage('menu')">←</button>
+        </header>
+        <main class="customer-content booking-content">
+            <div class="booking-form">
+                <label>CHOOSE DATE:</label>
+                <input type="date" id="bookingDate" min="">
+                <label>CHOOSE TIME:</label>
+                <div id="timeSlots" class="time-slots">
+                    <!-- Time slots loaded dynamically -->
+                </div>
+                <button class="btn-primary" onclick="confirmBooking()">DONE</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- CUSTOMER PREORDER PAGE -->
+    <div id="customerPreorder" class="page">
+        <header class="dashboard-header">
+            <h1>PREORDER</h1>
+            <button class="back-btn" onclick="goToCustomerPage('menu')">←</button>
+        </header>
+        <main class="customer-content preorder-content">
+            <div class="preorder-section">
+                <h2>YOUR PREORDER</h2>
+                <div id="preorderItems" class="preorder-items">
+                    <!-- Preorder items here -->
+                </div>
+                <div class="preorder-total">
+                    <strong>Total: <span id="preorderTotal">₱0.00</span></strong>
+                </div>
+                <button class="btn-primary" onclick="submitPreorder()">SUBMIT</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- BOOKINGS MODAL -->
+    <div id="bookingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeBookingsModal()">&times;</span>
+            <h2>CUSTOMER BOOKINGS:</h2>
+            <div id="modalBookingsList" class="bookings-list">
+                <!-- Bookings here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js"></script>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
