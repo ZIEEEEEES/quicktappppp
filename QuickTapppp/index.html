@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Shop Management System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="page active">
+        <div class="login-container">
+            <div class="login-box">
+                <h1>LOG IN</h1>
+                <form id="loginForm">
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                    <button type="submit" class="btn-login">Login</button>
+                    <p class="signup-link">No account? <a href="#" onclick="goToSignup()">Sign Up</a></p>
+                </form>
+                <div id="loginError" class="error-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Page -->
+    <div id="signupPage" class="page">
+        <div class="login-container">
+            <div class="login-box">
+                <h1>SIGN UP</h1>
+                <form id="signupForm">
+                    <input type="email" id="signupEmail" placeholder="Email" required>
+                    <input type="text" id="signupUsername" placeholder="Username" required>
+                    <input type="password" id="signupPassword" placeholder="Password" required>
+                    <select id="signupRole" required>
+                        <option value="">Select Role</option>
+                        <option value="admin">Admin</option>
+                        <option value="customer">Customer</option>
+                        <option value="cashier">Cashier</option>
+                    </select>
+                    <button type="submit" class="btn-login">Sign Up</button>
+                    <p class="signup-link">Already have account? <a href="#" onclick="goToLogin()">Log In</a></p>
+                </form>
+                <div id="signupError" class="error-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="page">
+        <header class="dashboard-header">
+            <h1>ADMIN DASHBOARD</h1>
+            <button class="menu-toggle" onclick="toggleMenu('adminMenu')">☰</button>
+        </header>
+        <nav id="adminMenu" class="admin-menu">
+            <button class="menu-btn" onclick="showAdminSection('menu')">EDIT MENU</button>
+            <button class="menu-btn" onclick="showAdminSection('drinkwheel')">EDIT DRINK WHEEL</button>
+            <button class="menu-btn" onclick="showAdminSection('trend')">CHECK DRINK TREND</button>
+            <button class="menu-btn" onclick="showAdminSection('bookings')">CUSTOMER BOOKINGS</button>
+            <button class="menu-btn" onclick="showAdminSection('trending')">TRENDING PRODUCTS</button>
+            <button class="menu-btn logout-btn" onclick="logout()">LOGOUT</button>
+        </nav>
+        <main class="admin-content">
+            <!-- Edit Menu Section -->
+            <div id="adminMenu-section" class="admin-section active">
+                <h2>Edit Menu</h2>
+                <div id="menuGrid" class="menu-grid"></div>
+                <button class="btn-action" onclick="addMenuItem()">+ Add Item</button>
+            </div>
+
+            <!-- Drink Wheel Section -->
+            <div id="adminDrinkwheel-section" class="admin-section">
+                <h2>Drink Wheel</h2>
+                <div class="drink-wheel-container">
+                    <canvas id="drinkWheelCanvas"></canvas>
+                </div>
+            </div>
+
+            <!-- Drink Trend Section -->
+            <div id="adminTrend-section" class="admin-section">
+                <h2>Drink Trend This Week</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Times Ordered</th>
+                            <th>Item Code</th>
+                            <th>Total Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trendTableBody">
+                        <tr>
+                            <td>18</td>
+                            <td>BIS-FRAP</td>
+                            <td>₱550.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="btn-action">OKAY</button>
+            </div>
+
+            <!-- Customer Bookings Section -->
+            <div id="adminBookings-section" class="admin-section">
+                <h2>Customer Bookings</h2>
+                <div id="bookingsContainer" class="bookings-list"></div>
+            </div>
+
+            <!-- Trending Products Section -->
+            <div id="adminTrending-section" class="admin-section">
+                <h2>Top 5 Drinks This Week</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Unit Sales</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trendingTableBody">
+                        <tr>
+                            <td>CAPPUCCINO</td>
+                            <td>5</td>
+                            <td>₱350.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Customer Dashboard -->
+    <div id="customerDashboard" class="page">
+        <header class="dashboard-header">
+            <h1>MENU</h1>
+            <button class="menu-toggle" onclick="toggleMenu('customerNav')">☰</button>
+        </header>
+        <nav id="customerNav" class="customer-nav">
+            <button class="category-btn active" onclick="filterMenuByCategory('all')">ALL</button>
+            <button class="category-btn" onclick="filterMenuByCategory('coffee')">COFFEE</button>
+            <button class="category-btn" onclick="filterMenuByCategory('pastry')">PASTRY</button>
+            <a href="#" onclick="goToCustomerPage('loyalty')">LOYALTY CARD</a>
+            <a href="#" onclick="goToCustomerPage('bookings')">MY BOOKINGS</a>
+            <button class="logout-btn" onclick="logout()">LOGOUT</button>
+        </nav>
+        <main class="customer-content">
+            <!-- Menu Grid -->
+            <div id="customerMenu" class="menu-grid">
+                <!-- Items loaded dynamically -->
+            </div>
+        </main>
+        <footer class="customer-footer">
+            <button onclick="goToCustomerPage('menu')" class="footer-btn">☕ Menu</button>
+            <button onclick="goToCustomerPage('booking')" class="footer-btn">📅 Booking</button>
+            <button onclick="goToCustomerPage('preorder')" class="footer-btn">🛒 Preorder</button>
+        </footer>
+    </div>
+
+    <!-- Customer Loyalty Page -->
+    <div id="customerLoyalty" class="page">
+        <header class="dashboard-header">
+            <h1>LOYALTY CARD</h1>
+            <button onclick="goToCustomerPage('menu')" class="back-btn">←</button>
+        </header>
+        <main class="customer-content">
+            <div class="loyalty-card">
+                <h2>Your Points</h2>
+                <div class="points-display" id="loyaltyPoints">500</div>
+                <canvas id="loyaltyWheel" width="300" height="300"></canvas>
+                <button class="btn-action" onclick="spinLoyaltyWheel()">SPIN</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Customer Bookings Page -->
+    <div id="customerBookings" class="page">
+        <header class="dashboard-header">
+            <h1>MY BOOKINGS</h1>
+            <button onclick="goToCustomerPage('menu')" class="back-btn">←</button>
+        </header>
+        <main class="customer-content">
+            <div id="myBookingsList" class="bookings-list"></div>
+        </main>
+    </div>
+
+    <!-- Customer Booking Page -->
+    <div id="customerBooking" class="page">
+        <header class="dashboard-header">
+            <h1>BOOKING</h1>
+            <button onclick="goToCustomerPage('menu')" class="back-btn">←</button>
+        </header>
+        <main class="customer-content">
+            <div class="booking-form">
+                <label>Choose Date:</label>
+                <input type="date" id="bookingDate">
+                <label>Choose Time:</label>
+                <div id="timeSlots" class="time-slots"></div>
+                <button class="btn-action" onclick="confirmBooking()">DONE</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Cashier Dashboard -->
+    <div id="cashierDashboard" class="page">
+        <header class="dashboard-header">
+            <h1>CASHIER DASHBOARD</h1>
+            <button class="menu-toggle" onclick="toggleMenu('cashierMenu')">☰</button>
+        </header>
+        <nav id="cashierMenu" class="cashier-menu">
+            <button class="category-btn active" onclick="filterCashierMenu('all')">ALL</button>
+            <button class="category-btn" onclick="filterCashierMenu('coffee')">COFFEE</button>
+            <button class="category-btn" onclick="filterCashierMenu('pastry')">PASTRY</button>
+            <input type="text" id="customerIdInput" placeholder="Enter Customer ID">
+            <button class="logout-btn" onclick="logout()">LOGOUT</button>
+            <button class="logout-btn" onclick="goToCashierPage('settings')">SETTINGS</button>
+        </nav>
+        <main class="cashier-content">
+            <div class="cashier-grid">
+                <!-- Left: Menu Items -->
+                <div class="cashier-menu-section">
+                    <div id="cashierMenuGrid" class="menu-grid"></div>
+                </div>
+                <!-- Right: Order Summary -->
+                <div class="cashier-order-section">
+                    <h2>ORDER SUMMARY</h2>
+                    <table class="order-table">
+                        <thead>
+                            <tr>
+                                <th>Item Qty.</th>
+                                <th>Item Code</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderTableBody">
+                        </tbody>
+                    </table>
+                    <div class="order-totals">
+                        <div class="total-row">
+                            <span>TOTAL:</span>
+                            <span id="orderTotal">₱0.00</span>
+                        </div>
+                        <div class="total-row">
+                            <span>CASH:</span>
+                            <span id="orderCash">₱0.00</span>
+                        </div>
+                        <div class="total-row">
+                            <span>CHANGE:</span>
+                            <span id="orderChange">₱0.00</span>
+                        </div>
+                    </div>
+                    <button class="btn-action" onclick="printOrder()">PRINT</button>
+                    <button class="btn-action" onclick="editOrder()">EDIT ORDER</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Cashier Settings Page -->
+    <div id="cashierSettings" class="page">
+        <header class="dashboard-header">
+            <h1>CASHIER SETTINGS</h1>
+            <button onclick="goToCashierPage('main')" class="back-btn">←</button>
+        </header>
+        <main class="customer-content">
+            <div class="settings-container">
+                <button class="btn-action" onclick="logout()">LOG OUT</button>
+                <button class="btn-action" onclick="changeAccount()">CHANGE ACCOUNT</button>
+                <button class="btn-action" onclick="checkBookings()">CHECK BOOKINGS</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for adding items -->
+    <div id="itemModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Add Menu Item</h2>
+            <form id="itemForm">
+                <input type="text" placeholder="Item Name" required>
+                <input type="text" placeholder="Item Code" required>
+                <select required>
+                    <option value="">Category</option>
+                    <option value="coffee">Coffee</option>
+                    <option value="pastry">Pastry</option>
+                </select>
+                <input type="number" placeholder="Price" step="0.01" required>
+                <button type="submit" class="btn-action">ADD</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js"></script>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
